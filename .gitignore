@@ -8,7 +8,6 @@ venv
 *$py.class
 .venv
 quiz.db
-*db
 .quiz.db
 *quiz.db
 . 
