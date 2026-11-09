@@ -4,7 +4,7 @@ from aiogram.filters import CommandStart, Command
 from aiogram.fsm.context import FSMContext
 from src.state import Quiz
 from src.question import QUESTIONS
-from src.keyboards import reply_buttons, inline_buttons, inline_buttons2
+from src.keyboards import reply_buttons, inline_buttons, inline_buttons2, inline_buttons3
 
 router = Router()
 
@@ -39,6 +39,29 @@ async def cmd_about(message: Message):
 async def cmd_group(message: Message):
     await message.answer("Твоя корзина пуста(")
     print(f"Пользователь {message.from_user.full_name} написал Корзина!")
+@router.message(F.text == "Акции")
+async def cmd_group(message: Message):
+    await message.answer("На данный момент акций нет(")
+    print(f"Пользователь {message.from_user.full_name} написал Акции!")
+@router.message(F.text == "Каталог")
+async def cmd_group(message: Message):
+    await message.answer("На данный момент каталог пуст(")
+    print(f"Пользователь {message.from_user.full_name} написал Каталог!")
+@router.message(F.text == "Контакты")
+async def cmd_group(message: Message):
+    await message.answer("Наши контакты: +996 555 55 55 55")
+    print(f"Пользователь {message.from_user.full_name} написал Контакты!")
+
+@router.message(F.text == "номер администратора")
+async def cmd_group(message: Message):
+    await message.answer("Номер администратора: +996 777 77 77 77")
+    print(f"Пользователь {message.from_user.full_name} написал номер администратора!")
+
+@router.message(F.text == "флаги")
+async def cmd_group(message: Message):
+    await message.answer("Флаги: 🇰🇬 🇺🇸 🇷🇺")
+    return await message.answer("Больше флагов: ", reply_markup=inline_buttons3)
+    print(f"Пользователь {message.from_user.full_name} написал флаги!")
 
 @router.callback_query(F.data == "quiz_start")
 async def quiz_start(callbak: CallbackQuery, state: FSMContext):

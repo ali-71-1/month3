@@ -7,3 +7,7 @@ venv
 *.py[cod]
 *$py.class
 .venv
+quiz.db
+*db
+.quiz.db
+*quiz.db
