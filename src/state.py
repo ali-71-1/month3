@@ -3,3 +3,7 @@ from aiogram.fsm.state import State, StatesGroup
 
 class Quiz(StatesGroup):
     waiting_abswer = State()
+
+
+class UserStates(StatesGroup):
+    waiting_new_username = State()
