@@ -1,0 +1,4 @@
+-- database: /home/ali/month3/db/quiz.db
+
+SELECT * FROM results
+ORDER BY `id` ASC;

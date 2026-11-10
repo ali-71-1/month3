@@ -1,8 +1,8 @@
 import sqlite3
 
 from db.qyeries import CREATE_USERS_TABLE, CREATE_USERS_TABLE, CREATE_QUESTIONS_TABLE, CREATE_RESULTS_TABLE
+from config import DATABASE
 
-DATABASE = "db/quiz.db"
 
 def get_db():
     conn = sqlite3.connect(DATABASE)

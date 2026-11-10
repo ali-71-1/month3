@@ -5,27 +5,35 @@ from aiogram.fsm.context import FSMContext
 from src.state import Quiz
 from src.question import QUESTIONS
 from src.keyboards import reply_buttons, inline_buttons, inline_buttons2, inline_buttons3
-
+from db.users import get_user, create_user, update_user_username, delete_user
 router = Router()
 
 @router.message(CommandStart())
 async def cmd_start(message: Message):
+    user = create_user(
+        telegram_id=message.from_user.id,
+        username=message.from_user.username or "Аноним"
+    )
     await message.answer(
-        f"Привет,{message.from_user.full_name} я твой бот!",
+        f"Привет,{message.from_user.full_name} я твой бот! \n Вот твой результат который возвращается из базы данных: \n{user}",
         reply_markup=reply_buttons
     )
     print(f"Пользователь {message.from_user.full_name} написал /start!")
+
 
 
 @router.message(Command("help"))
 async def cmd_help(message: Message):
     await message.answer(
         "/start - команда для запуска\n"
-        "/help - список команд",
+        "/help - список команд\n"
+        "/update_username - обновить имя пользователя",
         reply_markup=inline_buttons
     )
 
-
+@router.message(Command("update_username"))
+async def cmd_update_username(message: Message):
+    await message.answer("Введите новое имя пользователя:")
 
 @router.message(Command("about"))
 async def cmd_about(message: Message):

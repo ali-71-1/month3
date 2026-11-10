@@ -28,3 +28,15 @@ CREATE_RESULTS_TABLE = '''
     FOREIGN KEY (question_id) REFERENCES questions (id) ON DELETE CASCADE
     )
     '''
+
+
+    # CRUD- Create, Read, Update, Delete
+
+    # --USERS--
+GET_USER_BY_TG_ID = 'SELECT * FROM users WHERE telegram_id = ?'
+
+INSERT_USER = 'INSERT OR IGNORE INTO users (telegram_id, username) VALUES (?, ?)'
+
+UPDATE_USER_USERNAME = 'UPDATE users SET username = ? WHERE telegram_id = ?'
+
+DELETE_USER = 'DELETE FROM users WHERE telegram_id = ?'
