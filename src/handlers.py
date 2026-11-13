@@ -6,7 +6,8 @@ from src.state import Quiz, UserStates
 from src.question import QUESTIONS
 from src.keyboards import reply_buttons, inline_buttons, inline_buttons2, inline_buttons3
 from db.users import get_user, create_user, update_user_username, delete_user
-
+from db.questions import get_all_questions
+from db.results import save_result
 router = Router()
 
 @router.message(CommandStart())
@@ -93,31 +94,45 @@ async def cmd_group_flags(message: Message):
 @router.callback_query(F.data == "quiz_start")
 async def quiz_start(callbak: CallbackQuery, state: FSMContext):
     await callbak.answer("Начинаем игру!", show_alert=True)
-    await state.update_data(index=0, score=0)
+    questions = get_all_questions()
+    if not questions:
+        await callbak.message.answer("Вопросы не найдены в базе данных.")
+        return
+
+
+    await state.update_data(question=questions, index=0, score=0)
     await state.set_state(Quiz.waiting_abswer)
-    await callbak.message.answer(f"Вопрос 1: {QUESTIONS[0]['q']}")
+    await callbak.message.answer(f"Вопрос 1: {questions[0]['question_text']}")
 
 @router.message(Quiz.waiting_abswer)
 async def handle_answer(message: Message, state: FSMContext):
     data = await state.get_data()
     index = data["index"]
     score = data["score"]
+    questions = data["question"]
+    user = get_user(telegram_id=message.from_user.id)
+    q = questions[index]
+    is_correct = message.text.lower() == q["correct_answer"].lower()
+    save_result(users_id=user["id"],
+                question_id=q["id"],
+                is_correct=is_correct
+                   )
 
-    if message.text.lower() == QUESTIONS[index]["a"]:
+    if is_correct:
         score += 1
         await message.answer("Правильно! +1")
     else:
-        await message.answer(f"Неверно. Правильный ответ: {QUESTIONS[index]['a']}")
+        await message.answer(f"Неверно. Правильный ответ: {q['correct_answer']}")
 
     index += 1
-    if index >= len(QUESTIONS):
-        await message.answer(f"Конец! Счет: {score} / {len(QUESTIONS)}")
+    if index >= len(questions):
+        await message.answer(f"Конец! Счет: {score} / {len(questions)}")
         await state.clear()
         await message.answer("Хочешь сыграть снова?", reply_markup=inline_buttons2)
     else:
         await state.update_data(index=index, score=score)
-        await message.answer(f"Вопрос {index + 1}: {QUESTIONS[index]['q']}")
+        await message.answer(f"Вопрос {index + 1}: {questions[index]['question_text']}")
 
 @router.message()
 async def echo(message: Message):
-    await message.answer(f"Ты написал: {message.text}")
+    await message.answer(f"Ты написал: {message.from_username}, {message.text}")

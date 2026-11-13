@@ -40,3 +40,32 @@ INSERT_USER = 'INSERT OR IGNORE INTO users (telegram_id, username) VALUES (?, ?)
 UPDATE_USER_USERNAME = 'UPDATE users SET username = ? WHERE telegram_id = ?'
 
 DELETE_USER = 'DELETE FROM users WHERE telegram_id = ?'
+
+
+
+GET_ALL_QUESTIONS = 'SELECT * FROM questions'
+
+GET_QUESTION_BY_ID = 'SELECT * FROM questions WHERE id = ?'
+
+INSERT_QUESTION = 'INSERT INTO questions (question_text, correct_answer) VALUES (?, ?)'
+
+INSWERT_RESULT = 'INSERT INTO results (users_id, question_id, is_correct) VALUES (?, ?, ?)'
+
+GET_SCORE_BY_USER_ID = 'SELECT COUNT(*) AS total, SUM(is_correct) AS score FROM results WHERE users_id = ?'
+
+
+UPDATE_QUESTION_TEXT = 'UPDATE questions SET question_text = ? WHERE id = ?'
+
+DELETE_QUESTION = 'DELETE FROM questions WHERE id = ?'
+
+UPDATE_RESULT = 'UPDATE results SET is_correct = ? WHERE id = ?'
+
+DELETE_RESULTS_BY_USER = 'DELETE FROM results WHERE users_id = ?'
+
+GET_USER_ANSWERS = '''
+SELECT users.username, questions.question_text, results.is_correct
+FROM results
+INNER JOIN users ON users.id = results.users_id
+INNER JOIN questions ON questions.id = results.question_id
+WHERE users.telegram_id = ?
+'''
