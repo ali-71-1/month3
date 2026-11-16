@@ -69,3 +69,37 @@ INNER JOIN users ON users.id = results.users_id
 INNER JOIN questions ON questions.id = results.question_id
 WHERE users.telegram_id = ?
 '''
+GET_HISTORY = '''
+    SELECT q.question_text, r.is_correct
+    FROM results AS r
+    INNER JOIN users AS u
+        ON u.id = r.users_id
+    INNER JOIN questions AS q
+        ON q.id = r.question_id
+    WHERE u.telegram_id = ?
+    ORDER BY r.id DESC
+    LIMIT 20
+'''
+GET_TOP = '''
+    SELECT u.id AS user_id,
+           u.username,
+           COUNT(*) AS total,
+           SUM(r.is_correct) AS correct
+    FROM results AS r
+    INNER JOIN users AS u
+        ON u.id = r.users_id
+    GROUP BY u.id, u.username
+    ORDER BY correct DESC
+    LIMIT 10
+'''
+
+GET_HARDEST = '''
+    SELECT q.question_text,
+           ROUND(AVG(r.is_correct)*100, 1) AS success_rate
+    FROM results AS r
+    INNER JOIN questions AS q
+        ON q.id = r.question_id
+    GROUP BY r.question_id
+    ORDER BY success_rate ASC
+    LIMIT 1
+'''
